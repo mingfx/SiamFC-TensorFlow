@@ -1,0 +1,20 @@
+{
+  "z_image_size": 127,
+  "embed_config": {
+    "embedding_name": "convolutional_alexnet",
+    "embedding_checkpoint_file": "F:\\Moemil\\ImageTrack\\SiamFC\\SiamFC-TensorFlow\\assets\\2016-08-17.net.mat",
+    "train_embedding": false,
+    "init_method": "kaiming_normal",
+    "use_bn": true,
+    "bn_scale": true,
+    "bn_momentum": 0.05,
+    "bn_epsilon": 1e-06,
+    "embedding_feature_num": 256,
+    "weight_decay": 0.0005,
+    "stride": 8
+  },
+  "adjust_response_config": {
+    "train_bias": true,
+    "scale": 0.001
+  }
+}

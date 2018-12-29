@@ -55,7 +55,7 @@ class Tracker(object):
     # Feed in the first frame image to set initial state.
     bbox_feed = [bbox.y, bbox.x, bbox.height, bbox.width]
     input_feed = [frames[0], bbox_feed]
-    frame2crop_scale = self.siamese_model.initialize(sess, input_feed)
+    frame2crop_scale = self.siamese_model.initialize(sess, input_feed)#利用第一帧对sess初始化
 
     # Storing target state
     original_target_height = bbox.height
@@ -77,7 +77,7 @@ class Tracker(object):
                      current_target_state.bbox.height, current_target_state.bbox.width]
         input_feed = [filename, bbox_feed]
 
-        outputs, metadata = self.siamese_model.inference_step(sess, input_feed)
+        outputs, metadata = self.siamese_model.inference_step(sess, input_feed)#在这里运行sess，传回了响应结果
         search_scale_list = outputs['scale_xs']
         response = outputs['response']
         response_size = response.shape[1]

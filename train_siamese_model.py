@@ -6,7 +6,7 @@
 # Distributed under terms of the MIT license.
 
 """Train the model"""
-
+#训练Siamese Model
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -86,6 +86,7 @@ def _configure_optimizer(train_config, learning_rate):
 def main(model_config, train_config, track_config):
   os.environ['CUDA_VISIBLE_DEVICES'] = auto_select_gpu()
 
+  #创建训练路径，用来保存：配置，模型文件，TensorBoard日志
   # Create training directory which will be used to save: configurations, model files, TensorBoard logs
   train_dir = train_config['train_dir']
   if not osp.isdir(train_dir):
@@ -99,9 +100,12 @@ def main(model_config, train_config, track_config):
     np.random.seed(train_config['seed'])
     tf.set_random_seed(train_config['seed'])
 
+    #建立训练和验证模型
     # Build the training and validation model
+    #训练模型
     model = siamese_model.SiameseModel(model_config, train_config, mode='train')
     model.build()
+    #验证模型
     model_va = siamese_model.SiameseModel(model_config, train_config, mode='validation')
     model_va.build(reuse=True)
 
@@ -131,7 +135,7 @@ def main(model_config, train_config, track_config):
     summary_writer = tf.summary.FileWriter(train_dir, g)
     summary_op = tf.summary.merge_all()
 
-    global_variables_init_op = tf.global_variables_initializer()
+    global_variables_init_op = tf.global_variables_initializer()# 返回一个用来初始化 计算图中 所有global variable的 op。
     local_variables_init_op = tf.local_variables_initializer()
     g.finalize()  # Finalize graph to avoid adding ops by mistake
 
@@ -142,8 +146,9 @@ def main(model_config, train_config, track_config):
     sess = tf.Session(config=sess_config)
     model_path = tf.train.latest_checkpoint(train_config['train_dir'])
 
-    if not model_path:
-      sess.run(global_variables_init_op)
+    #是否已有存在的训练模型
+    if not model_path:#没有从头开始
+      sess.run(global_variables_init_op)  #初始化模型的参数
       sess.run(local_variables_init_op)
       start_step = 0
 
@@ -155,6 +160,7 @@ def main(model_config, train_config, track_config):
       saver.restore(sess, model_path)
       start_step = tf.train.global_step(sess, model.global_step.name) + 1
 
+    #训练并设置训练过程中的何时输出，何时保存模型
     # Training loop
     data_config = train_config['train_data_config']
     total_steps = int(data_config['epoch'] *

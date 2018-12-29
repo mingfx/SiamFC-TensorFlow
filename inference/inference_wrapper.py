@@ -77,6 +77,7 @@ class InferenceWrapper():
     self.build_upsample()
     self.dumb_op = tf.no_op('dumb_operation')
 
+#读取输入的图像数据
   def build_inputs(self):
     filename = tf.placeholder(tf.string, [], name='filename')
     image_file = tf.read_file(filename)
@@ -146,6 +147,7 @@ class InferenceWrapper():
                                              crop_size=[size_x, size_x])
     self.search_images = image_cropped + avg_chan
 
+  #输出images经过网络的结果
   def get_image_embedding(self, images, reuse=None):
     config = self.model_config['embed_config']
     arg_scope = convolutional_alexnet_arg_scope(config,
@@ -159,7 +161,7 @@ class InferenceWrapper():
 
     embed, _ = embedding_fn(images, reuse)
 
-    return embed
+    return embed #embed=数据经过网络后的输出
 
   def build_template(self):
     model_config = self.model_config
@@ -180,7 +182,7 @@ class InferenceWrapper():
                                 initializer=tf.zeros(templates.get_shape().as_list(), dtype=templates.dtype),
                                 trainable=False)
         with tf.control_dependencies([templates]):
-          self.init = tf.assign(state, templates, validate_shape=True)
+          self.init = tf.assign(state, templates, validate_shape=True)#把templates赋给state
         self.templates = state
 
   def build_detection(self):

@@ -24,7 +24,7 @@ class DataLoader(object):
     self.config = config
     self.is_training = is_training
 
-    preprocess_name = get(config, 'preprocessing_name', None)
+    preprocess_name = get(config, 'preprocessing_name', None)#获取config中的“preprocessing”配置参数（color，gray，none。。）
     logging.info('preproces -- {}'.format(preprocess_name))
 
     if preprocess_name == 'siamese_fc_color':
@@ -53,17 +53,24 @@ class DataLoader(object):
     else:
       raise ValueError('Preprocessing name {} was not recognized.'.format(preprocess_name))
 
-    self.dataset_py = VID(config['input_imdb'], config['max_frame_dist'])
+    self.dataset_py = VID(config['input_imdb'], config['max_frame_dist'])#config中的imput_imdb为输入路径
     self.sampler = Sampler(self.dataset_py, shuffle=is_training)
 
   def build(self):
     self.build_dataset()
     self.build_iterator()
 
+  '''
+  一个带有 yield 的函数就是一个 generator，它和普通函数不同，生成一个 generator 
+  看起来像函数调用，但不会执行任何函数代码，直到对其调用 next()（在 for 循环中会自动调用 next()）才开始执行。
+  虽然执行流程仍按函数的流程执行，但每执行到一个 yield 语句就会中断，并返回一个迭代值，下次执行时从 yield 的下一个语句继续执行。
+  看起来就好像一个函数在正常执行的过程中被 yield 中断了数次，每次中断都会通过 yield 返回当前的迭代值。
+  '''
+  #构建generator来读取数据，用在from_generator方法里从而批量读取数据
   def build_dataset(self):
     def sample_generator():
-      for video_id in self.sampler:
-        sample = self.dataset_py[video_id]
+      for video_id in self.sampler:#作用：随机取数据
+        sample = self.dataset_py[video_id]#dataset_py视频数据
         yield sample
 
     def transform_fn(video):
@@ -88,14 +95,15 @@ class DataLoader(object):
 
     dataset = tf.data.Dataset.from_generator(sample_generator,
                                              output_types=(tf.string),
-                                             output_shapes=(tf.TensorShape([2])))
+                                             output_shapes=(tf.TensorShape([2])))   #2维tensor
     dataset = dataset.map(transform_fn, num_parallel_calls=self.config['prefetch_threads'])
     dataset = dataset.prefetch(self.config['prefetch_capacity'])
-    dataset = dataset.repeat()
-    dataset = dataset.batch(self.config['batch_size'])
+    dataset = dataset.repeat()#feed数据重复的次数。1个epoch等于使用训练集中的全部样本训练一次；
+    dataset = dataset.batch(self.config['batch_size'])#batch_size：每次训练在训练集中取batchsize个样本训练；
     self.dataset_tf = dataset
 
   def build_iterator(self):
+    #使用make_one_shot_iterator()函数，构建一个iterator。
     self.iterator = self.dataset_tf.make_one_shot_iterator()
 
   def get_one_batch(self):

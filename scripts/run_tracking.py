@@ -33,8 +33,9 @@ ex = Experiment()
 
 @ex.config
 def configs():
-  checkpoint = 'Logs/SiamFC/track_model_checkpoints/SiamFC-3s-color-pretrained'
-  input_files = 'assets/KiteSurf'
+  checkpoint = 'F:\\Moemil\\ImageTrack\\SiamFC\\SiamFC-TensorFlow\\Logs\\' \
+               'SiamFC\\track_model_checkpoints\\SiamFC-3s-color-pretrained\\'
+  input_files = 'F:\\Moemil\\ImageTrack\\SiamFC\\SiamFC-TensorFlow\\assets\\KiteSurf\\'
 
 
 @ex.automain
@@ -81,7 +82,7 @@ def main(checkpoint, input_files):
       bb = [int(v) for v in first_line.strip().split(',')]
       init_bb = Rectangle(bb[0] - 1, bb[1] - 1, bb[2], bb[3])  # 0-index in python
 
-      trajectory = tracker.track(sess, init_bb, filenames, video_log_dir)
+      trajectory = tracker.track(sess, init_bb, filenames, video_log_dir)#sess很关键
       with open(osp.join(video_log_dir, 'track_rect.txt'), 'w') as f:
         for region in trajectory:
           rect_str = '{},{},{},{}\n'.format(region.x + 1, region.y + 1,

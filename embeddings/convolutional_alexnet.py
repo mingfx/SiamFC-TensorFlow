@@ -111,6 +111,7 @@ def convolutional_alexnet(inputs, reuse=None, scope='convolutional_alexnet'):
   """
   with tf.variable_scope(scope, 'convolutional_alexnet', [inputs], reuse=reuse) as sc:
     end_points_collection = sc.name + '_end_points'
+    #arg_scope的作用：为指定的函数slim.conv2d, slim.max_pool2d都带上默认的参数outputs_collections=end_points_collection
     with slim.arg_scope([slim.conv2d, slim.max_pool2d],
                         outputs_collections=end_points_collection):
       net = inputs
@@ -140,6 +141,7 @@ def convolutional_alexnet(inputs, reuse=None, scope='convolutional_alexnet'):
           b2 = slim.conv2d(b2, 128, [3, 3], 1, scope='b2')
         net = tf.concat([b1, b2], 3)
       # Convert end_points_collection into a dictionary of end_points.
+      #end_points_collection:输出的集合
       end_points = slim.utils.convert_collection_to_dict(end_points_collection)
       return net, end_points
 

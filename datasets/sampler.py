@@ -20,12 +20,12 @@ class Sampler(object):
     self.shuffle = shuffle
 
   def __iter__(self):
-    data_idxs = np.arange(len(self.data_source))
+    data_idxs = np.arange(len(self.data_source))#创建输入数据同样长度的数组
     if self.shuffle:
-      np.random.shuffle(data_idxs)
+      np.random.shuffle(data_idxs)#打乱数组顺序
 
     for idx in data_idxs:
-      yield idx
+      yield idx#每次输出一个随机数字
 
 
 if __name__ == '__main__':

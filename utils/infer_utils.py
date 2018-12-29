@@ -71,7 +71,7 @@ def get_exemplar_images(images, exemplar_size, targets_pos=None):
     return exemplar_img
 
 
-def get_crops(im, bbox, size_z, size_x, context_amount):
+def get_crops(im, bbox, size_z, size_x, context_amount):#（image,box,127,255,0.5)
   """Obtain image sub-window, padding with avg channel if area goes outside of border
 
   Adapted from https://github.com/bertinetto/siamese-fc/blob/master/ILSVRC15-curation/save_crops.m#L46
@@ -104,7 +104,7 @@ def get_crops(im, bbox, size_z, size_x, context_amount):
   return image_crop_x, scale_x
 
 
-def get_subwindow_avg(im, pos, model_sz, original_sz):
+def get_subwindow_avg(im, pos, model_sz, original_sz):#（image，box中心坐标，【255,255】，2倍的box大小【】）
   # avg_chans = np.mean(im, axis=(0, 1)) # This version is 3x slower
   avg_chans = [np.mean(im[:, :, 0]), np.mean(im[:, :, 1]), np.mean(im[:, :, 2])]
   if not original_sz:
@@ -113,6 +113,7 @@ def get_subwindow_avg(im, pos, model_sz, original_sz):
   im_sz = im.shape
   # make sure the size is not too small
   assert im_sz[0] > 2 and im_sz[1] > 2
+  #get_center取中心点
   c = [get_center(s) for s in sz]
 
   # check out-of-bounds coordinates, and set them to avg_chans
@@ -129,6 +130,7 @@ def get_subwindow_avg(im, pos, model_sz, original_sz):
   context_xmax = context_xmax + left_pad
   context_ymin = context_ymin + top_pad
   context_ymax = context_ymax + top_pad
+  #边缘填充
   if top_pad > 0 or bottom_pad > 0 or left_pad > 0 or right_pad > 0:
     R = np.pad(im[:, :, 0], ((top_pad, bottom_pad), (left_pad, right_pad)),
                'constant', constant_values=(avg_chans[0]))
@@ -141,8 +143,8 @@ def get_subwindow_avg(im, pos, model_sz, original_sz):
 
   im_patch_original = im[context_ymin:context_ymax + 1,
                       context_xmin:context_xmax + 1, :]
-  if not (model_sz[0] == original_sz[0] and model_sz[1] == original_sz[1]):
-    im_patch = resize(im_patch_original, tuple(model_sz))
+  if not (model_sz[0] == original_sz[0] and model_sz[1] == original_sz[1]):#如果输入的model_size和orginal_size不等
+    im_patch = resize(im_patch_original, tuple(model_sz))#resize到【255,255】
   else:
     im_patch = im_patch_original
   return im_patch, left_pad, top_pad, right_pad, bottom_pad

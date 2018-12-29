@@ -44,8 +44,9 @@ def set_bbox(artist, bbox):
 def configs():
   videoname = 'KiteSurf'
   runname = 'SiamFC-3s-color-pretrained'
-  data_dir = 'assets/'
-  track_log_dir = 'Logs/SiamFC/track_model_inference/{}/{}'.format(runname, videoname)
+  data_dir = 'F:\\Moemil\\ImageTrack\\SiamFC\\SiamFC-TensorFlow\\assets\\'
+  #track_log_dir = 'scripts/Logs/SiamFC/track_model_inference/{}/{}'.format(runname, videoname)
+  track_log_dir = 'F:\\Moemil\\ImageTrack\\SiamFC\\SiamFC-TensorFlow\\scripts\\Logs\\SiamFC\\track_model_inference\\{}'.format(runname)
 
 
 @ex.automain

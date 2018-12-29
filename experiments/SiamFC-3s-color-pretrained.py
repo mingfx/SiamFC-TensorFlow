@@ -21,7 +21,7 @@ from scripts.convert_pretrained_model import ex
 
 if __name__ == '__main__':
   RUN_NAME = 'SiamFC-3s-color-pretrained'
-  ex.run(config_updates={'model_config': {'embed_config': {'embedding_checkpoint_file': 'assets/2016-08-17.net.mat',
+  ex.run(config_updates={'model_config': {'embed_config': {'embedding_checkpoint_file': 'F:\\Moemil\\ImageTrack\\SiamFC\\SiamFC-TensorFlow\\assets\\2016-08-17.net.mat',
                                                            'train_embedding': False, },
                                           },
                          'train_config': {'train_dir': osp.join(LOG_DIR, 'track_model_checkpoints', RUN_NAME), },
@@ -31,3 +31,14 @@ if __name__ == '__main__':
                   '--force': True,
                   '--enforce_clean': False,
                   })
+
+
+# if __name__ == '__main__':
+#   RUN_NAME = 'SiamFC-3s-color-scratch'
+#   ex.run(config_updates={'train_config': {'train_dir': osp.join(LOG_DIR, 'track_model_checkpoints', RUN_NAME), },
+#                          'track_config': {'log_dir': osp.join(LOG_DIR, 'track_model_inference', RUN_NAME), }
+#                          },
+#          options={'--name': RUN_NAME,
+#                   '--force': True,
+#                   '--enforce_clean': False,
+#                   })

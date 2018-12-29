@@ -28,7 +28,7 @@ class SiameseModel:
     self.model_config = model_config
     self.train_config = train_config
     self.mode = mode
-    assert mode in ['train', 'validation', 'inference']
+    assert mode in ['train', 'validation', 'inference']  #训练，验证，推断
 
     if self.mode == 'train':
       self.data_config = self.train_config['train_data_config']
@@ -55,7 +55,7 @@ class SiameseModel:
       self.exemplars: image batch of shape [batch, hz, wz, 3]
       self.instances: image batch of shape [batch, hx, wx, 3]
     """
-    if self.mode in ['train', 'validation']:
+    if self.mode in ['train', 'validation']:#如果是在进行训练或验证
       with tf.device("/cpu:0"):  # Put data loading and preprocessing in CPU is substantially faster
         self.dataloader = DataLoader(self.data_config, self.is_training())
         self.dataloader.build()
@@ -63,7 +63,7 @@ class SiameseModel:
 
         exemplars = tf.to_float(exemplars)
         instances = tf.to_float(instances)
-    else:
+    else:#  如果在进行推断
       self.examplar_feed = tf.placeholder(shape=[None, None, None, 3],
                                           dtype=tf.uint8,
                                           name='examplar_input')
@@ -192,12 +192,12 @@ class SiameseModel:
   def setup_embedding_initializer(self):
     """Sets up the function to restore embedding variables from checkpoint."""
     embed_config = self.model_config['embed_config']
-    if embed_config['embedding_checkpoint_file']:
+    if embed_config['embedding_checkpoint_file']:  # 上面说过模型转换的时候是有设置matlab文件路径的
       # Restore Siamese FC models from .mat model files
       initialize = load_mat_model(embed_config['embedding_checkpoint_file'],
                                   'convolutional_alexnet/', 'detection/')
 
-      def restore_fn(sess):
+      def restore_fn(sess): # 初始化方式，下面赋值给self.init_fn了
         tf.logging.info("Restoring embedding variables from checkpoint file %s",
                         embed_config['embedding_checkpoint_file'])
         sess.run([initialize])

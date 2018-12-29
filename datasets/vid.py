@@ -52,7 +52,7 @@ def upsample(n_in, n_out):
 
 class VID:
   def __init__(self, imdb_path, max_frame_dist, epoch_size=None):
-    with open(imdb_path, 'rb') as f:
+    with open(imdb_path, 'rb') as f:#输入的是.pickle文件
       imdb = pickle.load(f)
 
     self.videos = imdb['videos']
@@ -60,11 +60,11 @@ class VID:
     self.max_frame_dist = max_frame_dist
 
     if epoch_size is None:
-      self.epoch_size = len(self.videos)
+      self.epoch_size = len(self.videos)#VID的len方法就是videos的长度（训练完整个样本的长度，也就是epoch_size)
     else:
       self.epoch_size = int(epoch_size)
 
-  def __getitem__(self, index):
+  def __getitem__(self, index):#重写取元素(VID[])方法
     img_ids = self.videos[index % len(self.videos)]
     n_frames = len(img_ids)
 
@@ -73,7 +73,7 @@ class VID:
     elif n_frames == self.time_steps:
       out_idxs = range(n_frames)
     else:
-      out_idxs = downsample(n_frames, self.time_steps, self.max_frame_dist)
+      out_idxs = downsample(n_frames, self.time_steps, self.max_frame_dist)#下采样
 
     video = []
     for j, frame_idx in enumerate(out_idxs):
